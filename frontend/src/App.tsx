@@ -61,7 +61,7 @@ function App() {
 
   return (
     <Container maxWidth="md">
-      <Typography variant="h4" component="h1" sx={{ my: 4, textAlign: 'center' }}>
+      <Typography variant="h4" component="h1" sx={{ my: 4, textAlign: 'center', color: 'text.primary' }}>
         Task Manager
       </Typography>
       <Box sx={{ display: 'flex', mb: 4 }}>
@@ -73,7 +73,7 @@ function App() {
             fullWidth
             sx={{ mr: 2 }}
           />
-          <Button type="submit" variant="contained" startIcon={<AddIcon />}>
+          <Button type="submit" variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: 'primary.main', color: 'background.paper' }}>
             Add
           </Button>
         </form>
@@ -85,19 +85,19 @@ function App() {
       ) : (
         <List>
           {tasks.map((task) => (
-            <ListItem key={Number(task.id)} sx={{ bgcolor: 'background.paper', mb: 2, borderRadius: 1 }}>
+            <ListItem key={Number(task.id)} sx={{ bgcolor: 'background.paper', mb: 2, borderRadius: 1, border: '1px solid', borderColor: 'grey.300' }}>
               <ListItemIcon>
                 <IconButton onClick={() => completeTask(task.id)}>
-                  {task.completed ? <CheckCircleIcon color="primary" /> : <CheckCircleIcon color="disabled" />}
+                  {task.completed ? <CheckCircleIcon sx={{ color: 'primary.main' }} /> : <CheckCircleIcon sx={{ color: 'grey.500' }} />}
                 </IconButton>
               </ListItemIcon>
               <ListItemText
                 primary={task.description}
-                sx={{ textDecoration: task.completed ? 'line-through' : 'none' }}
+                sx={{ color: 'text.primary', textDecoration: task.completed ? 'line-through' : 'none' }}
               />
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={() => deleteTask(task.id)}>
-                  <DeleteIcon />
+                  <DeleteIcon sx={{ color: 'error.main' }} />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>

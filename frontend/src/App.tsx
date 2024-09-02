@@ -106,15 +106,16 @@ function App() {
   };
 
   const toggleCategory = (category: string) => {
-    if (category === 'All') {
-      setSelectedCategories(['All']);
-    } else {
-      setSelectedCategories(prev =>
-        prev.includes(category)
-          ? prev.filter(c => c !== category && c !== 'All')
-          : [...prev.filter(c => c !== 'All'), category]
-      );
-    }
+    setSelectedCategories(prev => {
+      if (category === 'All') {
+        return prev.includes('All') ? [] : ['All'];
+      } else {
+        const newSelection = prev.includes(category)
+          ? prev.filter(c => c !== category)
+          : [...prev.filter(c => c !== 'All'), category];
+        return newSelection.length === 0 ? ['All'] : newSelection;
+      }
+    });
   };
 
   const filteredTasks = selectedCategories.includes('All')
@@ -137,7 +138,12 @@ function App() {
                 key={category}
                 button
                 onClick={() => toggleCategory(category)}
-                selected={selectedCategories.includes(category)}
+                sx={{
+                  bgcolor: selectedCategories.includes(category) ? 'grey.300' : 'transparent',
+                  '&:hover': {
+                    bgcolor: selectedCategories.includes(category) ? 'grey.400' : 'grey.100',
+                  },
+                }}
               >
                 <ListItemIcon>
                   {getCategoryIcon(category)}

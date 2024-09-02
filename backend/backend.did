@@ -1,13 +1,14 @@
 type Time = int;
 type Task = 
  record {
+   categories: vec text;
    completed: bool;
    createdAt: Time;
    description: text;
    id: nat;
  };
 service : {
-  addTask: (text) -> (nat);
+  addTask: (text, vec text) -> (nat);
   completeTask: (nat) -> (bool);
   deleteTask: (nat) -> (bool);
   getTasks: () -> (vec Task) query;

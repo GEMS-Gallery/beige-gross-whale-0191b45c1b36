@@ -4,13 +4,14 @@ import type { IDL } from '@dfinity/candid';
 
 export interface Task {
   'id' : bigint,
+  'categories' : Array<string>,
   'createdAt' : Time,
   'completed' : boolean,
   'description' : string,
 }
 export type Time = bigint;
 export interface _SERVICE {
-  'addTask' : ActorMethod<[string], bigint>,
+  'addTask' : ActorMethod<[string, Array<string>], bigint>,
   'completeTask' : ActorMethod<[bigint], boolean>,
   'deleteTask' : ActorMethod<[bigint], boolean>,
   'getTasks' : ActorMethod<[], Array<Task>>,

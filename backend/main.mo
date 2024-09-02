@@ -12,6 +12,7 @@ actor {
   type Task = {
     id: Nat;
     description: Text;
+    categories: [Text];
     completed: Bool;
     createdAt: Time.Time;
   };
@@ -19,12 +20,13 @@ actor {
   stable var taskId: Nat = 0;
   let taskMap = HashMap.HashMap<Nat, Task>(10, Nat.equal, Nat.hash);
 
-  public func addTask(description: Text) : async Nat {
+  public func addTask(description: Text, categories: [Text]) : async Nat {
     let id = taskId;
     taskId += 1;
     let task: Task = {
       id = id;
       description = description;
+      categories = categories;
       completed = false;
       createdAt = Time.now();
     };
@@ -43,6 +45,7 @@ actor {
         let updatedTask: Task = {
           id = task.id;
           description = task.description;
+          categories = task.categories;
           completed = true;
           createdAt = task.createdAt;
         };

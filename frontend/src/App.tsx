@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { backend } from 'declarations/backend';
-import { useForm } from 'react-hook-form';
-import { Box, Container, Typography, TextField, Button, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, CircularProgress } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
+import { Box, Container, Typography, TextField, Button, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, CircularProgress, Chip } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon } from '@mui/icons-material';
 
 interface Task {
   id: bigint;
   description: string;
+  categories: string[];
   completed: boolean;
   createdAt: bigint;
 }
@@ -14,7 +15,7 @@ interface Task {
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const { register, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     fetchTasks();
@@ -31,9 +32,10 @@ function App() {
     setLoading(false);
   };
 
-  const onSubmit = async (data: { description: string }) => {
+  const onSubmit = async (data: { description: string; categories: string }) => {
     try {
-      await backend.addTask(data.description);
+      const categories = data.categories.split(',').map(cat => cat.trim()).filter(cat => cat !== '');
+      await backend.addTask(data.description, categories);
       reset();
       fetchTasks();
     } catch (error) {
@@ -64,17 +66,39 @@ function App() {
       <Typography variant="h4" component="h1" sx={{ my: 4, textAlign: 'center', color: 'text.primary' }}>
         Task Manager
       </Typography>
-      <Box sx={{ display: 'flex', mb: 4 }}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', width: '100%' }}>
-          <TextField
-            {...register('description', { required: true })}
-            label="New Task"
-            variant="outlined"
-            fullWidth
-            sx={{ mr: 2 }}
+      <Box sx={{ display: 'flex', flexDirection: 'column', mb: 4 }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <Controller
+            name="description"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="New Task"
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+            )}
+          />
+          <Controller
+            name="categories"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Categories (comma-separated)"
+                variant="outlined"
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+            )}
           />
           <Button type="submit" variant="contained" startIcon={<AddIcon />} sx={{ bgcolor: 'primary.main', color: 'background.paper' }}>
-            Add
+            Add Task
           </Button>
         </form>
       </Box>
@@ -93,6 +117,13 @@ function App() {
               </ListItemIcon>
               <ListItemText
                 primary={task.description}
+                secondary={
+                  <Box sx={{ mt: 1 }}>
+                    {task.categories.map((category, index) => (
+                      <Chip key={index} label={category} size="small" sx={{ mr: 1, mb: 1 }} />
+                    ))}
+                  </Box>
+                }
                 sx={{ color: 'text.primary', textDecoration: task.completed ? 'line-through' : 'none' }}
               />
               <ListItemSecondaryAction>

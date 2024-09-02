@@ -9,9 +9,3 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;
 }
-
-.app-header {
-  background-image: url('https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixid=M3w2MzIxNTd8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MjUzMDkxMTB8&ixlib=rb-4.0.3');
-  background-size: cover;
-  background-position: center;
-}

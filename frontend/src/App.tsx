@@ -61,11 +61,9 @@ function App() {
 
   return (
     <Container maxWidth="md">
-      <Box className="app-header" sx={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
-        <Typography variant="h2" component="h1" sx={{ color: 'white', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-          Task Manager
-        </Typography>
-      </Box>
+      <Typography variant="h4" component="h1" sx={{ my: 4, textAlign: 'center' }}>
+        Task Manager
+      </Typography>
       <Box sx={{ display: 'flex', mb: 4 }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', width: '100%' }}>
           <TextField
@@ -89,7 +87,9 @@ function App() {
           {tasks.map((task) => (
             <ListItem key={Number(task.id)} sx={{ bgcolor: 'background.paper', mb: 2, borderRadius: 1 }}>
               <ListItemIcon>
-                <i data-feather={task.completed ? 'check-circle' : 'circle'} onClick={() => completeTask(task.id)} style={{ cursor: 'pointer' }} />
+                <IconButton onClick={() => completeTask(task.id)}>
+                  {task.completed ? <CheckCircleIcon color="primary" /> : <CheckCircleIcon color="disabled" />}
+                </IconButton>
               </ListItemIcon>
               <ListItemText
                 primary={task.description}

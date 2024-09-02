@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { backend } from 'declarations/backend';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Container, Typography, TextField, Button, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, CircularProgress, Chip, Grid } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon } from '@mui/icons-material';
+import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon, Label as LabelIcon, FitnessCenter as FitnessIcon, LocalDining as DiningIcon, Commute as CommuteIcon, Pets as PetsIcon, Code as CodeIcon, Brush as ArtIcon, LocalLibrary as ReadingIcon, Movie as EntertainmentIcon, AttachMoney as FinanceIcon, EmojiEvents as GoalsIcon } from '@mui/icons-material';
 
 interface Task {
   id: bigint;
@@ -18,7 +18,27 @@ const categoryIcons: { [key: string]: React.ReactElement } = {
   School: <SchoolIcon />,
   Shopping: <ShoppingIcon />,
   Personal: <PersonalIcon />,
+  Fitness: <FitnessIcon />,
+  Dining: <DiningIcon />,
+  Commute: <CommuteIcon />,
+  Pets: <PetsIcon />,
+  Coding: <CodeIcon />,
+  Art: <ArtIcon />,
+  Reading: <ReadingIcon />,
+  Entertainment: <EntertainmentIcon />,
+  Finance: <FinanceIcon />,
+  Goals: <GoalsIcon />,
 };
+
+function getCategoryIcon(category: string): React.ReactElement {
+  const lowerCategory = category.toLowerCase();
+  for (const [key, value] of Object.entries(categoryIcons)) {
+    if (lowerCategory.includes(key.toLowerCase())) {
+      return value;
+    }
+  }
+  return <LabelIcon />;
+}
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -101,7 +121,7 @@ function App() {
                 selected={selectedCategories.includes(category)}
               >
                 <ListItemIcon>
-                  {categoryIcons[category] || <WorkIcon />}
+                  {getCategoryIcon(category)}
                 </ListItemIcon>
                 <ListItemText primary={category} />
               </ListItem>
@@ -163,7 +183,7 @@ function App() {
                     secondary={
                       <Box sx={{ mt: 1 }}>
                         {task.categories.map((category, index) => (
-                          <Chip key={index} icon={categoryIcons[category] || <WorkIcon />} label={category} size="small" sx={{ mr: 1, mb: 1 }} />
+                          <Chip key={index} icon={getCategoryIcon(category)} label={category} size="small" sx={{ mr: 1, mb: 1 }} />
                         ))}
                       </Box>
                     }

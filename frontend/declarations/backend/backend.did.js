@@ -11,6 +11,7 @@ export const idlFactory = ({ IDL }) => {
     'addTask' : IDL.Func([IDL.Text, IDL.Vec(IDL.Text)], [IDL.Nat], []),
     'completeTask' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'deleteTask' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'getDefaultCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getTasks' : IDL.Func([], [IDL.Vec(Task)], ['query']),
   });
 };

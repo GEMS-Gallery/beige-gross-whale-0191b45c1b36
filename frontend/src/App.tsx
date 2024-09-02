@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { backend } from 'declarations/backend';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Container, Typography, TextField, Button, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, CircularProgress, Chip, Grid } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon, Label as LabelIcon, FitnessCenter as FitnessIcon, LocalDining as DiningIcon, Commute as CommuteIcon, Pets as PetsIcon, Code as CodeIcon, Brush as ArtIcon, LocalLibrary as ReadingIcon, Movie as EntertainmentIcon, AttachMoney as FinanceIcon, EmojiEvents as GoalsIcon } from '@mui/icons-material';
+import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon, Label as LabelIcon, FitnessCenter as FitnessIcon, LocalDining as DiningIcon, Commute as CommuteIcon, Pets as PetsIcon, Code as CodeIcon, Brush as ArtIcon, LocalLibrary as ReadingIcon, Movie as EntertainmentIcon, AttachMoney as FinanceIcon, EmojiEvents as GoalsIcon, SportsBasketball as SportsIcon, CurrencyBitcoin as CryptoIcon, ShowChart as StocksIcon } from '@mui/icons-material';
 
 interface Task {
   id: bigint;
@@ -28,6 +28,9 @@ const categoryIcons: { [key: string]: React.ReactElement } = {
   Entertainment: <EntertainmentIcon />,
   Finance: <FinanceIcon />,
   Goals: <GoalsIcon />,
+  Sports: <SportsIcon />,
+  Crypto: <CryptoIcon />,
+  Stocks: <StocksIcon />,
 };
 
 function getCategoryIcon(category: string): React.ReactElement {
@@ -44,10 +47,12 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [defaultCategories, setDefaultCategories] = useState<string[]>([]);
   const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     fetchTasks();
+    fetchDefaultCategories();
   }, []);
 
   const fetchTasks = async () => {
@@ -59,6 +64,15 @@ function App() {
       console.error('Error fetching tasks:', error);
     }
     setLoading(false);
+  };
+
+  const fetchDefaultCategories = async () => {
+    try {
+      const categories = await backend.getDefaultCategories();
+      setDefaultCategories(categories);
+    } catch (error) {
+      console.error('Error fetching default categories:', error);
+    }
   };
 
   const onSubmit = async (data: { description: string; categories: string }) => {
@@ -102,7 +116,7 @@ function App() {
     ? tasks.filter(task => task.categories.some(cat => selectedCategories.includes(cat)))
     : tasks;
 
-  const allCategories = Array.from(new Set(tasks.flatMap(task => task.categories)));
+  const allCategories = Array.from(new Set([...defaultCategories, ...tasks.flatMap(task => task.categories)]));
 
   return (
     <Container maxWidth="lg">

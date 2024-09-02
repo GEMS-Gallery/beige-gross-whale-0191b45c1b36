@@ -20,13 +20,19 @@ actor {
   stable var taskId: Nat = 0;
   let taskMap = HashMap.HashMap<Nat, Task>(10, Nat.equal, Nat.hash);
 
+  let defaultCategories: [Text] = [
+    "Work", "Home", "School", "Shopping", "Personal",
+    "Sports", "Crypto", "Stocks", "Fitness", "Entertainment"
+  ];
+
   public func addTask(description: Text, categories: [Text]) : async Nat {
     let id = taskId;
     taskId += 1;
+    let taskCategories = if (categories.size() == 0) { defaultCategories } else { categories };
     let task: Task = {
       id = id;
       description = description;
-      categories = categories;
+      categories = taskCategories;
       completed = false;
       createdAt = Time.now();
     };
@@ -36,6 +42,10 @@ actor {
 
   public query func getTasks() : async [Task] {
     Iter.toArray(taskMap.vals())
+  };
+
+  public query func getDefaultCategories() : async [Text] {
+    defaultCategories
   };
 
   public func completeTask(id: Nat) : async Bool {

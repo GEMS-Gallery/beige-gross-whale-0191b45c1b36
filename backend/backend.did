@@ -11,5 +11,6 @@ service : {
   addTask: (text, vec text) -> (nat);
   completeTask: (nat) -> (bool);
   deleteTask: (nat) -> (bool);
+  getDefaultCategories: () -> (vec text) query;
   getTasks: () -> (vec Task) query;
 }

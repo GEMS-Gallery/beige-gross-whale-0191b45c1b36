@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { backend } from 'declarations/backend';
 import { useForm, Controller } from 'react-hook-form';
 import { Box, Container, Typography, TextField, Button, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, IconButton, CircularProgress, Chip, Grid } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon, Label as LabelIcon, FitnessCenter as FitnessIcon, LocalDining as DiningIcon, Commute as CommuteIcon, Pets as PetsIcon, Code as CodeIcon, Brush as ArtIcon, LocalLibrary as ReadingIcon, Movie as EntertainmentIcon, AttachMoney as FinanceIcon, EmojiEvents as GoalsIcon, SportsBasketball as SportsIcon, CurrencyBitcoin as CryptoIcon, ShowChart as StocksIcon } from '@mui/icons-material';
+import { Add as AddIcon, Delete as DeleteIcon, CheckCircle as CheckCircleIcon, Work as WorkIcon, Home as HomeIcon, School as SchoolIcon, ShoppingCart as ShoppingIcon, Favorite as PersonalIcon, Label as LabelIcon, FitnessCenter as FitnessIcon, LocalDining as DiningIcon, Commute as CommuteIcon, Pets as PetsIcon, Code as CodeIcon, Brush as ArtIcon, LocalLibrary as ReadingIcon, Movie as EntertainmentIcon, AttachMoney as FinanceIcon, EmojiEvents as GoalsIcon, SportsBasketball as SportsIcon, CurrencyBitcoin as CryptoIcon, ShowChart as StocksIcon, AllInclusive as AllIcon } from '@mui/icons-material';
 
 interface Task {
   id: bigint;
@@ -13,6 +13,7 @@ interface Task {
 }
 
 const categoryIcons: { [key: string]: React.ReactElement } = {
+  All: <AllIcon />,
   Work: <WorkIcon />,
   Home: <HomeIcon />,
   School: <SchoolIcon />,
@@ -46,7 +47,7 @@ function getCategoryIcon(category: string): React.ReactElement {
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(['All']);
   const [defaultCategories, setDefaultCategories] = useState<string[]>([]);
   const { control, handleSubmit, reset } = useForm();
 
@@ -69,7 +70,7 @@ function App() {
   const fetchDefaultCategories = async () => {
     try {
       const categories = await backend.getDefaultCategories();
-      setDefaultCategories(categories);
+      setDefaultCategories(['All', ...categories]);
     } catch (error) {
       console.error('Error fetching default categories:', error);
     }
@@ -105,18 +106,22 @@ function App() {
   };
 
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev =>
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
+    if (category === 'All') {
+      setSelectedCategories(['All']);
+    } else {
+      setSelectedCategories(prev =>
+        prev.includes(category)
+          ? prev.filter(c => c !== category && c !== 'All')
+          : [...prev.filter(c => c !== 'All'), category]
+      );
+    }
   };
 
-  const filteredTasks = selectedCategories.length > 0
-    ? tasks.filter(task => task.categories.some(cat => selectedCategories.includes(cat)))
-    : tasks;
+  const filteredTasks = selectedCategories.includes('All')
+    ? tasks
+    : tasks.filter(task => task.categories.some(cat => selectedCategories.includes(cat)));
 
-  const allCategories = Array.from(new Set([...defaultCategories, ...tasks.flatMap(task => task.categories)]));
+  const allCategories = ['All', ...Array.from(new Set([...defaultCategories, ...tasks.flatMap(task => task.categories)]))].filter(cat => cat !== 'All');
 
   return (
     <Container maxWidth="lg">
